@@ -1,0 +1,74 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-family: sans-serif;
+    color: #202122;
+}
+
+header, main {
+    margin: 0 3.5rem;
+}
+
+header {
+    padding-top: 0.8rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid #c8ccd1;
+    margin-bottom: 0.85rem;
+}
+
+section {
+    padding: 1rem 0;
+    border-bottom: 1px solid #c8ccd1;
+}
+
+section:last-of-type {
+    border-bottom: none;
+}
+
+h2 {
+    text-align: left;
+    padding: 0.25rem 0.5rem;
+    background-color: #eee;
+    border: 1px solid #ddd;
+    font-weight: bold;
+}
+
+a {
+    color: #3366cc;
+}
+
+.card {
+    width: 100%;
+    border: 1px solid #e2e2e2;
+    padding: 0.5rem;
+}
+
+.card-title {
+    margin-bottom: 1.5rem;
+}
+
+.card-body {
+    font-size: 1rem;
+}
+
+@media screen and (min-width: 1024px) {
+    .card form {
+        max-width: 80%;
+    }
+}
+
+@media screen and (min-width: 1300px) {
+    .card form {
+        max-width: 40%;
+    }
+}
+
+@media screen and (min-width: 1600px) {
+    .card form {
+        max-width: 35%;
+    }
+}
