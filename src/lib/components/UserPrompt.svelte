@@ -1,21 +1,45 @@
+<script lang="ts">
+    const CHAR_LIMIT = 160;
+    
+    let description = ""; 
+
+    $: charsLeft = CHAR_LIMIT - description.length;
+
+    async function handleSubmit(event: { currentTarget: EventTarget & HTMLFormElement }) {
+
+        let formData = new FormData(event.currentTarget);
+        let description = formData.get("description");
+
+        await fetch(`/api/pages?description=${description}`);
+    }
+
+    async function handleInput(event: { currentTarget: EventTarget & HTMLTextAreaElement}) {
+        if (event.currentTarget.value.length >= CHAR_LIMIT) {
+            description = description.slice(0, CHAR_LIMIT);
+        }
+    }
+</script>
+
 <section class="prompt-container">
     <div class="card">
         <h2 class="card-title prompt-title">Generate your Wiki page</h2>
         <div class="card-body">
-            <form id="inputForm">
+            <form method="POST" on:submit|preventDefault={handleSubmit}>
                 <div class="form-item">
                     <label for="txtDesc">Brief description about yourself:</label>
                     <textarea 
+                        bind:value={description}
+                        on:input={handleInput} 
+                        required 
                         name="description" 
                         id="txtDesc" 
                         rows="2" 
-                        maxlength="160" 
+                        maxlength={CHAR_LIMIT}
                         placeholder="I'm a software engineer building fun projects and interested in learning about occult knowledge."></textarea>
                 </div>
                 <div class="form-item txt-info">
                     <div>
-                        <span id="charsLeft" class="character-counter">160</span>
-                        <span class="character-counter"> character(s) left</span>
+                        <span class="character-counter">{charsLeft} character(s) left</span>
                     </div>
                     <button id="btnSubmit" type="submit">Generate your wiki page</button>
                 </div>
