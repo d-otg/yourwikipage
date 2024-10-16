@@ -1,7 +1,8 @@
 <script lang="ts">
     const CHAR_LIMIT = 160;
     
-    let description = ""; 
+    let description = "";
+    let isInvalidDescription = false;
 
     $: charsLeft = CHAR_LIMIT - description.length;
 
@@ -10,10 +11,17 @@
         let formData = new FormData(event.currentTarget);
         let description = formData.get("description");
 
+        if (!description?.toString().trim().length || description?.toString().trim().length <= 0) {
+            isInvalidDescription = true;
+            return;
+        }
+
         await fetch(`/api/pages?description=${description}`);
     }
 
     async function handleInput(event: { currentTarget: EventTarget & HTMLTextAreaElement}) {
+        isInvalidDescription = false;
+
         if (event.currentTarget.value.length >= CHAR_LIMIT) {
             description = description.slice(0, CHAR_LIMIT);
         }
@@ -28,6 +36,7 @@
                 <div class="form-item">
                     <label for="txtDesc">Brief description about yourself:</label>
                     <textarea 
+                        class:invalid={isInvalidDescription }
                         bind:value={description}
                         on:input={handleInput} 
                         required 
@@ -36,6 +45,9 @@
                         rows="2" 
                         maxlength={CHAR_LIMIT}
                         placeholder="I'm a software engineer building fun projects and interested in learning about occult knowledge."></textarea>
+                    {#if isInvalidDescription}
+                        <div><small class="validation-msg invalid">This field is required</small></div>
+                    {/if}
                 </div>
                 <div class="form-item txt-info">
                     <div>
@@ -83,6 +95,15 @@
     box-shadow: inset 0 0 0 1px #36c;
 }
 
+#txtDesc.invalid:focus {
+    border: 1px solid #e74c3c;
+    box-shadow: inset 0 0 0 1px #e74c3c;
+}
+
+#txtDesc.invalid {
+    border: 1px solid #e74c3c;
+}
+
 .txt-info {
     display: flex;
     justify-content: space-between;
@@ -112,6 +133,10 @@
 
 #btnSubmit:hover {
     background-color: #4b77d6;
+}
+
+.validation-msg.invalid {
+    color: #e74c3c;
 }
 
 .creator-container {
