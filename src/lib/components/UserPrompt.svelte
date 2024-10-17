@@ -255,7 +255,7 @@
 
 .modal-footer {
     text-align: center;
-    margin-top: 2rem;
+    margin-top: 0.5rem;
     margin-bottom: 0.5rem;
 }
 
