@@ -1,10 +1,17 @@
 <script lang="ts">
+    import type { PageResults } from "$lib/types";
+
     const CHAR_LIMIT = 160;
     
-    let description = "";
+    let descriptionInput = "";
     let isInvalidDescription = false;
 
-    $: charsLeft = CHAR_LIMIT - description.length;
+    let pageTitles: string[] = ["Early life", "Racism", "Adderall overdose incident", "Pipebomb plot", "Death"];
+    let errorMsg = "";
+
+    let resultsModal: HTMLElement;
+
+    $: charsLeft = CHAR_LIMIT - descriptionInput.length;
 
     async function handleSubmit(event: { currentTarget: EventTarget & HTMLFormElement }) {
 
@@ -16,15 +23,50 @@
             return;
         }
 
-        await fetch(`/api/pages?description=${description}`);
+        errorMsg = "";
+        
+        try {
+            const response = await fetch(`/api/pages?description=${description}`);
+
+            if (!response.ok) {
+                let error: Error = await response.json();
+                
+                descriptionInput = "";
+
+                if (response.status === 429) {
+                    errorMsg = "You hit the rate limit. Please try again in a few minutes.";
+                    return;
+                }
+                else if (response.status === 500) {
+                    errorMsg = "Something went wrong, our team of incredibly talented engineers are already looking into it."
+                    return;
+                }
+                else {
+                    errorMsg = error.message;
+                    return;
+                }
+            }
+
+            let results: PageResults = await response.json();
+
+            pageTitles = results.titles;
+
+            resultsModal.style.display = "block";
+        } catch {
+            errorMsg = "An unexpected error ocurred, please try again later.";
+        }
     }
 
     async function handleInput(event: { currentTarget: EventTarget & HTMLTextAreaElement}) {
         isInvalidDescription = false;
 
         if (event.currentTarget.value.length >= CHAR_LIMIT) {
-            description = description.slice(0, CHAR_LIMIT);
+            descriptionInput = descriptionInput.slice(0, CHAR_LIMIT);
         }
+    }
+
+    function closeResults() {
+        resultsModal.style.display = "none";
     }
 </script>
 
@@ -37,12 +79,12 @@
                     <label for="txtDesc">Brief description about yourself:</label>
                     <textarea 
                         class:invalid={isInvalidDescription }
-                        bind:value={description}
+                        bind:value={descriptionInput}
                         on:input={handleInput} 
                         required 
                         name="description" 
                         id="txtDesc" 
-                        rows="2" 
+                        rows="3" 
                         maxlength={CHAR_LIMIT}
                         placeholder="I'm a software engineer building fun projects and interested in learning about occult knowledge."></textarea>
                     {#if isInvalidDescription}
@@ -53,13 +95,42 @@
                     <div>
                         <span class="character-counter">{charsLeft} character(s) left</span>
                     </div>
-                    <button id="btnSubmit" type="submit">Generate your wiki page</button>
+                    <button type="submit" class="btn primary">Generate your wiki page</button>
                 </div>
             </form>
         </div>
     </div>
     <div class="creator-container">
-        <small>made by: <a href="https://x.com/daniel_cpe" target="_blank">@daniel_cpe</a></small>
+        <small>made by: <a href="https://x.com/daniel_cpe" target="_blank">Daniel Ortega</a></small>
+    </div>
+</section>
+<section>
+    <div class="modal" bind:this={resultsModal}>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Your future Wikipedia table of contents will be:</h2>
+            </div>
+            <div class="modal-body">
+                {#if errorMsg}
+                    <span>{errorMsg}</span>
+                {:else}
+                    <div class="contents-dropdown">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M9 17H20M9 12H20M9 7H20M4 16.5H5V17.5H4V16.5ZM4 11.5H5V12.5H4V11.5ZM4 6.5V7.5H5V6.5H4Z" stroke="#202122" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                        <span>Contents</span>
+                        <svg viewBox="0 0 15.00 15.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#202122" stroke-width="0.00015000000000000001" transform="rotate(0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.09"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M4.18179 6.18181C4.35753 6.00608 4.64245 6.00608 4.81819 6.18181L7.49999 8.86362L10.1818 6.18181C10.3575 6.00608 10.6424 6.00608 10.8182 6.18181C10.9939 6.35755 10.9939 6.64247 10.8182 6.81821L7.81819 9.81821C7.73379 9.9026 7.61934 9.95001 7.49999 9.95001C7.38064 9.95001 7.26618 9.9026 7.18179 9.81821L4.18179 6.81821C4.00605 6.64247 4.00605 6.35755 4.18179 6.18181Z" fill="#202122"></path> </g></svg>
+                    </div>
+                    <ol>
+                        {#each pageTitles as title}
+                            <li><svg viewBox="0 0 15.00 15.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#202122" stroke-width="0.00015000000000000001" transform="rotate(0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.09"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M4.18179 6.18181C4.35753 6.00608 4.64245 6.00608 4.81819 6.18181L7.49999 8.86362L10.1818 6.18181C10.3575 6.00608 10.6424 6.00608 10.8182 6.18181C10.9939 6.35755 10.9939 6.64247 10.8182 6.81821L7.81819 9.81821C7.73379 9.9026 7.61934 9.95001 7.49999 9.95001C7.38064 9.95001 7.26618 9.9026 7.18179 9.81821L4.18179 6.81821C4.00605 6.64247 4.00605 6.35755 4.18179 6.18181Z" fill="#202122"></path> </g></svg><span class="title">{title}</span></li>
+                        {/each}
+                    </ol>
+                {/if}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn primary">Save Image</button>
+                <button type="button" class="btn secondary" on:click={closeResults}>Close</button>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -114,32 +185,88 @@
     color: #343434;
 }
 
-#btnSubmit {
-    padding: 0.35rem 1rem;
-    font-size: 0.9rem;
-    font-weight: bold;
-    color: #fff;
-    background-color: #36c;
-    border: 1px solid #36c;
-    cursor: pointer;
-    font-family: sans-serif;
-    transition: background-color 250ms ease-in-out;
-}
-
-#btnSubmit:focus {
-    border: 1px solid #fff;
-    outline: 1px solid #36c;
-}
-
-#btnSubmit:hover {
-    background-color: #4b77d6;
-}
-
 .validation-msg.invalid {
     color: #e74c3c;
 }
 
 .creator-container {
     margin-top: 0.5rem;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.5)
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 2.5rem auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 33.333%;
+  position: relative;
+}
+
+.modal-header {
+    margin-bottom: 2rem;
+}
+
+.modal-body > div {
+    margin-bottom: 1rem;
+}
+
+.modal-body > div:last-child {
+    margin-bottom: 0;
+}
+
+.modal-footer {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.contents-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dadde3;
+    padding: 0.4rem;
+    width: min-content;
+}
+
+.contents-dropdown span {
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-right: 2.5rem;
+}
+
+ol {
+    list-style: none;
+}
+
+li {
+    border-bottom: 1px solid #dadde3;
+    padding: 0.8rem 0;
+    margin-bottom: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+}
+
+svg {
+    height: 32px;
+}
+
+.title {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.5rem;
 }
 </style>
