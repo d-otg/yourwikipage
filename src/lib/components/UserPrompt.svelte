@@ -90,7 +90,7 @@
             <form method="POST" on:submit|preventDefault={handleSubmit}>
                 <div class="form-item">
                     <div class="form-label-wrapper">
-                        <label for="txtDesc">Brief description about yourself:</label>
+                        <label for="txtDesc">Tell me about yourself</label>
                         <span class="character-counter">{charCount}/{CHAR_LIMIT}</span>
                     </div>
                     <textarea 
@@ -107,7 +107,7 @@
                         <div><small class="validation-msg invalid">This field is required</small></div>
                     {/if}
                 </div>
-                <div class="form-item txt-info">
+                <div class="form-item">
                     <button type="submit" class="btn primary submit">Generate Table of Contents</button>
                 </div>
             </form>
@@ -151,7 +151,7 @@ form {
 }
 
 .form-item {
-    margin-bottom: 0.15rem;
+    margin-bottom: 0.5rem;
 }
 
 .form-label-wrapper {
@@ -161,16 +161,20 @@ form {
 
 .form-item label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
+    color: #636363;
+}
+
+.character-counter {
     font-size: 0.9rem;
-    color: #343434;
+    color: #636363;
 }
 
 #txtDesc {
     width: 100%;
     resize: none;
-    font-size: 0.9rem;
-    color: #343434;
+    font-size: 1rem;
+    color: #202122;
     padding: 0.25rem 0.5rem;
     background-color: #fff;
     border: 1px solid #a2a9b1;
@@ -195,18 +199,8 @@ form {
     border: 1px solid #e74c3c;
 }
 
-.txt-info {
-    display: flex;
-    justify-content: space-between;
-}
-
 .btn.submit {
     width: 100%;
-}
-
-.character-counter {
-    font-size: 0.8rem;
-    color: #343434;
 }
 
 .validation-msg.invalid {
