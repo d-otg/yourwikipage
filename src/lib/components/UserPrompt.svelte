@@ -1,15 +1,17 @@
 <script lang="ts">
     import type { PageResults } from "$lib/types";
+    import * as htmlToImage from "html-to-image";
 
     const CHAR_LIMIT = 160;
     
     let descriptionInput = "";
     let isInvalidDescription = false;
 
-    let pageTitles: string[] = ["Early life", "Racism", "Adderall overdose incident", "Pipebomb plot", "Death"];
+    let pageTitles: string[] = [];
     let errorMsg = "";
 
     let resultsModal: HTMLElement;
+    let resultsContent: HTMLElement;
 
     $: charsLeft = CHAR_LIMIT - descriptionInput.length;
 
@@ -65,6 +67,17 @@
         }
     }
 
+    function saveResultsImage() {
+        htmlToImage.toJpeg(resultsContent, { quality: 0.95, style: { background: "white" } })
+            .then(function (dataUrl) {
+                let link = document.createElement("a");
+                link.download = "yourwikipage.jpeg";
+                link.href = dataUrl;
+                link.click();
+                link.remove();
+            });
+    }
+
     function closeResults() {
         resultsModal.style.display = "none";
     }
@@ -72,7 +85,7 @@
 
 <section class="prompt-container">
     <div class="card">
-        <h2 class="card-title prompt-title">Generate your Wiki page</h2>
+        <h2 class="card-title prompt-title">Generate Your Future Wikipedia Table of Contents</h2>
         <div class="card-body">
             <form method="POST" on:submit|preventDefault={handleSubmit}>
                 <div class="form-item">
@@ -95,39 +108,41 @@
                     <div>
                         <span class="character-counter">{charsLeft} character(s) left</span>
                     </div>
-                    <button type="submit" class="btn primary">Generate your wiki page</button>
+                    <button type="submit" class="btn primary">Generate Table of Contents</button>
                 </div>
             </form>
         </div>
     </div>
     <div class="creator-container">
-        <small>made by: <a href="https://x.com/daniel_cpe" target="_blank">Daniel Ortega</a></small>
+        <small>made by: <a href="https://x.com/daniel_cpe" target="_blank">@daniel_cpe</a></small>
     </div>
 </section>
 <section>
     <div class="modal" bind:this={resultsModal}>
         <div class="modal-content">
-            <div class="modal-header">
-                <h2>Your future Wikipedia table of contents will be:</h2>
-            </div>
-            <div class="modal-body">
-                {#if errorMsg}
-                    <span>{errorMsg}</span>
-                {:else}
-                    <div class="contents-dropdown">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M9 17H20M9 12H20M9 7H20M4 16.5H5V17.5H4V16.5ZM4 11.5H5V12.5H4V11.5ZM4 6.5V7.5H5V6.5H4Z" stroke="#202122" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
-                        <span>Contents</span>
-                        <svg viewBox="0 0 15.00 15.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#202122" stroke-width="0.00015000000000000001" transform="rotate(0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.09"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M4.18179 6.18181C4.35753 6.00608 4.64245 6.00608 4.81819 6.18181L7.49999 8.86362L10.1818 6.18181C10.3575 6.00608 10.6424 6.00608 10.8182 6.18181C10.9939 6.35755 10.9939 6.64247 10.8182 6.81821L7.81819 9.81821C7.73379 9.9026 7.61934 9.95001 7.49999 9.95001C7.38064 9.95001 7.26618 9.9026 7.18179 9.81821L4.18179 6.81821C4.00605 6.64247 4.00605 6.35755 4.18179 6.18181Z" fill="#202122"></path> </g></svg>
-                    </div>
-                    <ol>
-                        {#each pageTitles as title}
-                            <li><svg viewBox="0 0 15.00 15.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#202122" stroke-width="0.00015000000000000001" transform="rotate(0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.09"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M4.18179 6.18181C4.35753 6.00608 4.64245 6.00608 4.81819 6.18181L7.49999 8.86362L10.1818 6.18181C10.3575 6.00608 10.6424 6.00608 10.8182 6.18181C10.9939 6.35755 10.9939 6.64247 10.8182 6.81821L7.81819 9.81821C7.73379 9.9026 7.61934 9.95001 7.49999 9.95001C7.38064 9.95001 7.26618 9.9026 7.18179 9.81821L4.18179 6.81821C4.00605 6.64247 4.00605 6.35755 4.18179 6.18181Z" fill="#202122"></path> </g></svg><span class="title">{title}</span></li>
-                        {/each}
-                    </ol>
-                {/if}
+            <div class="resultsImageWrapper" bind:this={resultsContent}>
+                <div class="modal-header">
+                    <h2>Your Future Wikipedia Table of Contents</h2>
+                </div>
+                <div class="modal-body">
+                    {#if errorMsg}
+                        <span>{errorMsg}</span>
+                    {:else}
+                        <div class="contents-dropdown">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M9 17H20M9 12H20M9 7H20M4 16.5H5V17.5H4V16.5ZM4 11.5H5V12.5H4V11.5ZM4 6.5V7.5H5V6.5H4Z" stroke="#202122" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                            <span>Contents</span>
+                            <svg viewBox="0 0 15.00 15.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#202122" stroke-width="0.00015000000000000001" transform="rotate(0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.09"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M4.18179 6.18181C4.35753 6.00608 4.64245 6.00608 4.81819 6.18181L7.49999 8.86362L10.1818 6.18181C10.3575 6.00608 10.6424 6.00608 10.8182 6.18181C10.9939 6.35755 10.9939 6.64247 10.8182 6.81821L7.81819 9.81821C7.73379 9.9026 7.61934 9.95001 7.49999 9.95001C7.38064 9.95001 7.26618 9.9026 7.18179 9.81821L4.18179 6.81821C4.00605 6.64247 4.00605 6.35755 4.18179 6.18181Z" fill="#202122"></path> </g></svg>
+                        </div>
+                        <ol>
+                            {#each pageTitles as title}
+                                <li><svg viewBox="0 0 15.00 15.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#202122" stroke-width="0.00015000000000000001" transform="rotate(0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.09"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M4.18179 6.18181C4.35753 6.00608 4.64245 6.00608 4.81819 6.18181L7.49999 8.86362L10.1818 6.18181C10.3575 6.00608 10.6424 6.00608 10.8182 6.18181C10.9939 6.35755 10.9939 6.64247 10.8182 6.81821L7.81819 9.81821C7.73379 9.9026 7.61934 9.95001 7.49999 9.95001C7.38064 9.95001 7.26618 9.9026 7.18179 9.81821L4.18179 6.81821C4.00605 6.64247 4.00605 6.35755 4.18179 6.18181Z" fill="#202122"></path> </g></svg><span class="title">{title}</span></li>
+                            {/each}
+                        </ol>
+                    {/if}
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn primary">Save Image</button>
+                <button type="button" class="btn primary" on:click={saveResultsImage}>Save Image</button>
                 <button type="button" class="btn secondary" on:click={closeResults}>Close</button>
             </div>
         </div>
@@ -209,14 +224,25 @@
 .modal-content {
   background-color: #fff;
   margin: 2.5rem auto;
-  padding: 20px;
+  padding: 0.5rem 0.3rem;
   border: 1px solid #888;
   width: 33.333%;
   position: relative;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  animation-name: animatetop;
+  animation-duration: 0.4s
+}
+
+.resultsImageWrapper {
+    padding: 0.5rem;
 }
 
 .modal-header {
     margin-bottom: 2rem;
+}
+
+.modal-body {
+    padding: 0.5rem;
 }
 
 .modal-body > div {
@@ -230,6 +256,7 @@
 .modal-footer {
     text-align: center;
     margin-top: 2rem;
+    margin-bottom: 0.5rem;
 }
 
 .contents-dropdown {
@@ -268,5 +295,10 @@ svg {
 .title {
     font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 1.5rem;
+}
+
+@keyframes animatetop {
+  from {top: -300px; opacity: 0}
+  to {top: 0; opacity: 1}
 }
 </style>
