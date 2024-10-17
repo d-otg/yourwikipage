@@ -10,7 +10,11 @@ body {
 }
 
 header, main {
-    margin: 0 3.5rem;
+    margin: 0 1rem;
+}
+
+main {
+    height: 100%;
 }
 
 header {
@@ -22,7 +26,6 @@ header {
 
 section {
     padding: 1rem 0;
-    border-bottom: 1px solid #c8ccd1;
 }
 
 section:last-of-type {
@@ -30,11 +33,21 @@ section:last-of-type {
 }
 
 h2 {
-    text-align: left;
     padding: 0.25rem 0.5rem;
     background-color: #eee;
     border: 1px solid #ddd;
     font-weight: bold;
+    font-size: 1.3rem;
+}
+
+h2.green {
+    background-color: #cef2e0;
+    border-color: #a3bfb1;
+}
+
+h2.blue {
+    background-color: #cedff2;
+    border-color: #a3b0bf;
 }
 
 a {
@@ -47,12 +60,22 @@ a {
     padding: 0.5rem;
 }
 
+.card.green {
+    background-color: #f5fffa;
+}
+
+.card.blue {
+    background-color: #f5faff;
+}
+
 .card-title {
     margin-bottom: 1.5rem;
+    text-align: center;
 }
 
 .card-body {
     font-size: 1rem;
+    width: 100%;
 }
 
 .btn {
@@ -89,20 +112,14 @@ a {
     color: #404244;
 }
 
-@media screen and (min-width: 1024px) {
-    .card form {
-        max-width: 40%;
+@media only screen and (min-width: 760px) {
+    header, main {
+        margin: 0 5rem;
     }
 }
 
-@media screen and (min-width: 1300px) {
-    .card form {
-        max-width: 40%;
-    }
-}
-
-@media screen and (min-width: 1600px) {
-    .card form {
-        max-width: 40%;
+@media only screen and (min-width: 1360px) {
+    header, main {
+        margin: 0 15rem;
     }
 }
