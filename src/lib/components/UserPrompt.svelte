@@ -85,7 +85,7 @@
 
 <section class="prompt-container">
     <div class="card blue">
-        <h2 class="card-title blue">Generate Your Future Wikipedia Table of Contents</h2>
+        <h2 class="card-title blue">Generate your future Wikipedia Table of Contents</h2>
         <div class="card-body">
             <form method="POST" on:submit|preventDefault={handleSubmit}>
                 <div class="form-item">
@@ -147,7 +147,6 @@
 <style>
 form {
     width: 100%;
-    margin: 0 auto;
 }
 
 .form-item {
@@ -225,7 +224,8 @@ form {
   margin: 2.5rem auto;
   padding: 0.5rem 0.3rem;
   border: 1px solid #888;
-  width: 33.333%;
+  width: 90%;
+  min-width: 300px;
   position: relative;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
   animation-name: animatetop;
@@ -270,8 +270,8 @@ form {
 
 .contents-dropdown span {
     font-weight: bold;
-    font-size: 1.2rem;
-    margin-right: 2.5rem;
+    font-size: 1rem;
+    margin-right: 2.25rem;
 }
 
 ol {
@@ -288,12 +288,12 @@ li {
 }
 
 svg {
-    height: 32px;
+    height: 1.5rem;
 }
 
 .title {
     font-family: Georgia, 'Times New Roman', Times, serif;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
 }
 
 @keyframes animatetop {
@@ -305,11 +305,35 @@ svg {
     .btn.submit {
         width: max-content;
     }
+
+    .contents-dropdown span {
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin-right: 2.5rem;
+    }
+
+    .title {
+        font-size: 1.5rem;
+    }
+
+    svg {
+        height: 2rem;
+    }
+}
+
+@media only screen and (min-width: 590px) {
+    .modal-content {
+        width: 540px;
+    }
 }
 
 @media only screen and (min-width: 920px) {
     form {
         width: 80%;
+    }
+
+    .modal-content {
+        width: 600px;
     }
 }
 
@@ -317,11 +341,15 @@ svg {
     form {
         width: 70%;
     }
+
+    .modal-content {
+        width: 640px;
+    }
 }
 
 @media only screen and (min-width: 1620px) {
     form {
-        width: 55%;
+        width: 50%;
     }
 }
 </style>

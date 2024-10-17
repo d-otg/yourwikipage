@@ -14,13 +14,8 @@ header, main {
     margin: 0 1rem;
 }
 
-main {
-    height: 100%;
-}
-
 header {
-    padding-top: 0.8rem;
-    padding-bottom: 0.25rem;
+    padding: 0.8rem 0.5rem 0.25rem 0.5rem;
     border-bottom: 1px solid #c8ccd1;
     margin-bottom: 1.5rem;
 }
@@ -71,7 +66,7 @@ a {
 
 .card-title {
     margin-bottom: 2.25rem;
-    text-align: center;
+    text-align: left;
 }
 
 .card-body {
@@ -122,7 +117,7 @@ a {
 
 @media only screen and (min-width: 1360px) {
     header, main {
-        margin-right: 5rem;
-        margin-left: 5rem;
+        margin-right: 15rem;
+        margin-left: 15rem;
     }
 }
