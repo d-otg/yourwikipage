@@ -89,6 +89,7 @@
     }
 
     function closeResults() {
+        descriptionInput = "";
         resultsModal.style.display = "none";
     }
 </script>
@@ -149,7 +150,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <!-- <button type="button" class="btn primary" on:click={saveResultsImage}>Download as image</button> -->
+            <button type="button" class="btn primary" on:click={saveResultsImage}>Download image</button>
             <button type="button" class="btn secondary" on:click={closeResults}>Close</button>
         </div>
     </div>
