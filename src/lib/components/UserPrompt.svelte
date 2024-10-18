@@ -149,7 +149,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn primary" on:click={saveResultsImage}>Download as image</button>
+            <!-- <button type="button" class="btn primary" on:click={saveResultsImage}>Download as image</button> -->
             <button type="button" class="btn secondary" on:click={closeResults}>Close</button>
         </div>
     </div>
@@ -260,6 +260,7 @@ form {
 
 .modal-footer {
     text-align: right;
+    padding: 0.5rem;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
 }
