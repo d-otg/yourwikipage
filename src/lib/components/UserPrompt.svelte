@@ -123,7 +123,7 @@
                     {/if}
                 </div>
                 <div class="form-item">
-                    <button type="submit" class="btn primary submit" bind:this={submitBtn}><span class="button-text">Generate Table of Contents</span></button>
+                    <button type="submit" class="btn primary submit" bind:this={submitBtn}><span class="button-text">Generate table of contents</span></button>
                 </div>
             </form>
         </div>
@@ -149,7 +149,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn primary" on:click={saveResultsImage}>Save Image</button>
+            <button type="button" class="btn primary" on:click={saveResultsImage}>Save as image</button>
             <button type="button" class="btn secondary" on:click={closeResults}>Close</button>
         </div>
     </div>
