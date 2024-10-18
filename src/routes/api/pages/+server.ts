@@ -28,10 +28,17 @@ export const GET: RequestHandler = async ({ url }) => {
     Knowing all that, here is the person's description: ${description.trim()}`;
 
     const result = await model.generateContent(prompt);
+        
+    if (result.response.candidates && result.response.candidates.length > 0) {
+        if (result.response.candidates[0].finishReason === "SAFETY") {
+            error(400, { message: "Pease do not type anything inappropiate." });
+        }
+    }
+    
     const resultText = result.response.text().replace("\n", "").trim();
 
     if (resultText === "NOT OKAY") {
-        error(400, "Could not generate your Wiki page using the provided description. Please follow the example in textbox.");
+        error(400, "Could not generate your results using the provided description. Please follow the example in the textbox above.");
     }
 
     let pageResults: PageResults = {
