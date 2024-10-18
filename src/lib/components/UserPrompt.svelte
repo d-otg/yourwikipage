@@ -12,6 +12,7 @@
 
     let resultsModal: HTMLElement;
     let resultsContent: HTMLElement;
+    let submitBtn: HTMLButtonElement;
 
     $: charCount = descriptionInput.length;
 
@@ -28,12 +29,17 @@
         errorMsg = "";
         
         try {
+            submitBtn.classList.add("button-loading");
+            submitBtn.disabled = true;
             const response = await fetch(`/api/pages?description=${description}`);
 
             if (!response.ok) {
                 let error: Error = await response.json();
                 
                 descriptionInput = "";
+
+                submitBtn.classList.remove("button-loading");
+                submitBtn.disabled = false;
 
                 if (response.status === 429) {
                     errorMsg = "You hit the rate limit. Please try again in a few minutes.";
@@ -53,6 +59,9 @@
 
             pageTitles = results.titles;
 
+            submitBtn.classList.remove("button-loading");
+            submitBtn.disabled = false;
+
             resultsModal.style.display = "block";
         } catch {
             errorMsg = "An unexpected error ocurred, please try again later.";
@@ -61,6 +70,7 @@
 
     async function handleInput(event: { currentTarget: EventTarget & HTMLTextAreaElement}) {
         isInvalidDescription = false;
+        errorMsg = "";
 
         if (event.currentTarget.value.length >= CHAR_LIMIT) {
             descriptionInput = descriptionInput.slice(0, CHAR_LIMIT);
@@ -84,14 +94,16 @@
 </script>
 
 <section class="prompt-container">
-    <div class="card blue">
-        <h2 class="card-title blue">Generate your future Wikipedia Table of Contents</h2>
+    <div class="card">
+        <h2 class="card-title">Discover your Wikipedia table of contents</h2>
+        <div style="text-align: center; margin-bottom: 1rem;">
+            <span class="help-text">Enter a brief description about yourself to discover what your Wikipedia table of contents would look like</span>
+        </div>
         <div class="card-body">
             <form method="POST" on:submit|preventDefault={handleSubmit}>
                 <div class="form-item">
-                    <div class="form-label-wrapper">
-                        <label for="txtDesc">Tell me about yourself</label>
-                        <span class="character-counter">{charCount}/{CHAR_LIMIT}</span>
+                    <div class="char-counter-container">
+                        <span class="char-counter">{charCount}/{CHAR_LIMIT}</span>
                     </div>
                     <textarea 
                         class:invalid={isInvalidDescription }
@@ -111,7 +123,7 @@
                     {/if}
                 </div>
                 <div class="form-item">
-                    <button type="submit" class="btn primary submit">Generate Table of Contents</button>
+                    <button type="submit" class="btn primary submit" bind:this={submitBtn}><span class="button-text">Generate Table of Contents</span></button>
                 </div>
             </form>
         </div>
@@ -121,7 +133,7 @@
     <div class="modal-content">
         <div class="resultsImageWrapper" bind:this={resultsContent}>
             <div class="modal-header">
-                <h2>Your Future Wikipedia Table of Contents</h2>
+                <h2>Here's your Wikipedia table of contents</h2>
             </div>
             <div class="modal-body">
                 <div class="contents-dropdown">
@@ -146,24 +158,18 @@
 <style>
 form {
     width: 100%;
+    margin: 0 auto;
 }
 
 .form-item {
     margin-bottom: 0.5rem;
 }
 
-.form-label-wrapper {
-    display: flex;
-    justify-content: space-between;
+.char-counter-container {
+    text-align: right;
 }
 
-.form-item label {
-    display: block;
-    margin-bottom: 0.4rem;
-    color: #636363;
-}
-
-.character-counter {
+.char-counter {
     font-size: 0.9rem;
     color: #636363;
 }
@@ -199,6 +205,7 @@ form {
 
 .btn.submit {
     width: 100%;
+    position: relative;
 }
 
 .validation-msg.invalid {
@@ -301,9 +308,7 @@ svg {
 }
 
 @media only screen and (min-width: 520px) {
-    .btn.submit {
-        width: max-content;
-    }
+    
 
     .contents-dropdown span {
         font-weight: bold;
