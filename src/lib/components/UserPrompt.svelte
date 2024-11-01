@@ -4,20 +4,21 @@
 
     const CHAR_LIMIT = 160;
     
-    let descriptionInput = "";
-    let isInvalidDescription = false;
+    let descriptionInput = $state("");
+    let isInvalidDescription = $state(false);
 
-    let pageTitles: string[] = [];
-    let errorMsg = "";
+    let pageTitles: string[] = $state([]);
+    let errorMsg = $state("");
 
     let resultsModal: HTMLElement;
     let resultsContent: HTMLElement;
     let submitBtn: HTMLButtonElement;
 
-    $: charCount = descriptionInput.length;
+    let charCount = $derived(descriptionInput.length);
 
-    async function handleSubmit(event: { currentTarget: EventTarget & HTMLFormElement }) {
-
+    async function handleSubmit(event: Event & { currentTarget: EventTarget & HTMLFormElement }) {
+        event.preventDefault();
+        
         let formData = new FormData(event.currentTarget);
         let description = formData.get("description");
 
@@ -55,7 +56,7 @@
                 }
             }
 
-            let results: PageResults = await response.json();
+            let results = await response.json() as PageResults;
 
             pageTitles = results.titles;
 
@@ -101,21 +102,21 @@
             <span class="help-text">Enter a brief description about yourself to discover what your Wikipedia table of contents would look like</span>
         </div>
         <div class="card-body">
-            <form method="POST" on:submit|preventDefault={handleSubmit}>
+            <form method="POST" onsubmit={handleSubmit}>
                 <div class="form-item">
                     <div class="char-counter-container">
                         <span class="char-counter">{charCount}/{CHAR_LIMIT}</span>
                     </div>
                     <textarea 
-                        class:invalid={isInvalidDescription }
+                        class:invalid={isInvalidDescription}
                         bind:value={descriptionInput}
-                        on:input={handleInput} 
+                        oninput={handleInput} 
                         required 
                         name="description" 
                         id="txtDesc" 
                         rows="3" 
                         maxlength={CHAR_LIMIT}
-                        placeholder="I'm a software engineer building fun projects and interested in learning about occult knowledge."></textarea>
+                        placeholder="I'm a software engineer by day and a vigilante by night"></textarea>
                     {#if isInvalidDescription}
                         <div><small class="validation-msg invalid">This field is required</small></div>
                     {/if}
@@ -124,7 +125,9 @@
                     {/if}
                 </div>
                 <div class="form-item">
-                    <button type="submit" class="btn primary submit" bind:this={submitBtn}><span class="button-text">Generate table of contents</span></button>
+                    <button type="submit" class="btn primary submit" bind:this={submitBtn}>
+                        <span class="button-text">Generate table of contents</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -150,8 +153,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn primary" on:click={saveResultsImage}>Download image</button>
-            <button type="button" class="btn secondary" on:click={closeResults}>Close</button>
+            <button type="button" class="btn primary" onclick={saveResultsImage}>Download image</button>
+            <button type="button" class="btn secondary" onclick={closeResults}>Close</button>
         </div>
     </div>
 </div>
